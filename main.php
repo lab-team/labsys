@@ -14,8 +14,8 @@ if (! isset($_SESSION['name'])) {
     $name = $_SESSION['name'];
     $userObj=new ds_UserInfoModel();
     $userRes=$userObj->getData($name);
-    $china_name = $userRes[0]['china_name'];
-    $face_url = $userRes[0]['face'];
+    $china_name = $userRes[0]['chinaname'];
+    $face_url = $userRes[0]['image'];
     $taskObj=new ds_TaskInfoModel();
     $taskRes=$taskObj->getData(false,false,$name);
     $taskCount = count($taskRes);
@@ -495,7 +495,7 @@ window.onresize=function(){
              <!-- Right side column. Contains the navbar and content of the page -->
 	  
 	   <div id="shangceng">
-		    <iframe id="aa" src="index2.php" width="100%" height="100%" frameborder="0" onload="changeFrameHeight()"></iframe>
+		    <iframe id="aa" src="home.php" width="100%" height="100%" frameborder="0" onload="changeFrameHeight()"></iframe>
         </div>
      </div>
 	<!-- ./wrapper -->
