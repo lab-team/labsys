@@ -86,29 +86,6 @@ UNLOCK TABLES;
 -- Table structure for table `stureg`
 --
 
-DROP TABLE IF EXISTS `stureg`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `stureg` (
-  `student_num` text NOT NULL,
-  `regDate` text,
-  `regTime` text
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `stureg`
---
-
-LOCK TABLES `stureg` WRITE;
-/*!40000 ALTER TABLE `stureg` DISABLE KEYS */;
-/*!40000 ALTER TABLE `stureg` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `system`
---
-
 DROP TABLE IF EXISTS `system`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -135,6 +112,15 @@ UNLOCK TABLES;
 
 
 
+
+
+DROP TABLE IF EXISTS `stusign`;
+CREATE TABLE `stusign` (
+  `id` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '签到id',
+  `stuno` varchar(20) NOT NULL DEFAULT '' COMMENT '学号',
+  `regtime` varchar(20) NOT NULL DEFAULT '0000-00-00' COMMENT '签到时间',
+  `mac` varchar(50) NOT NULL DEFAULT '' COMMENT '签到mac地址'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `task`;
@@ -177,10 +163,11 @@ CREATE TABLE `userinfo` (
   `regtime` varchar(20) NOT NULL DEFAULT '0000-00-00' COMMENT '注册时间',
   `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT  '手机号码',
   `status` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '状态-用于软删除 0未删除，1删除',
+  `mac` varchar(50) NOT NULL DEFAULT '' COMMENT '签到mac地址',
   `image` varchar(100) NOT NULL DEFAULT '' COMMENT '头像'
 );
 LOCK TABLES `userinfo` WRITE;
-INSERT INTO `userinfo` VALUES (1,'chenpan','25d55ad283aa400af464c76d713c07ad','陈攀','2016223045183','saygr@qq.com','研一','2017-01-01','13500000000',0,'image_head/head7.jpg'),(2,'yuanling','25d55ad283aa400af464c76d713c07ad','袁玲','2016223040019','2641946537@qq.com','研一','2017-01-01','13500000000',0,'image_head/head3.jpg'),(3,'wss','25d687e2c7e715b2f1c9bc30a47b0863','王莎莎','2016223040085','565107769@qq.com','研一','2017-01-01','13500000000',0,'image_head/head1.jpg'),(4,'qcp','792b271fe3e6cee7b1618786e6b96781','邱晨鹏','2016223045164','237203435@qq.com','研一','2017-01-01','13500000000',0,'image_head/head7.jpg'),(5,'qilingyun','faccdfbd7a234251fcb70ef80a5a5d9a','齐凌云','2015223040074','1223865610@qq.com','研二','2017-01-01','13500000000',0,'image_head/head7.jpg'),(6,'404619844','e928b7b6b35af1635176a6473c24f045','李政志','2014223040115','aaronlzz@qq.com','研三','2017-01-01','13500000000',0,'image_head/head7.jpg'),(7,'chen','8aa7f8937f7f7036c5e230deaaae19e3','陈新义','2015223045183','907303458@qq.com','研二','2017-01-01','13500000000',0,'image_head/head7.jpg'),(8,'王思雅','54b61741237e8c968fbc203509a00c9c','王思雅','2015223040080','2451305642@qq.com','研二','2017-01-01','13500000000',0,'image_head/head7.jpg');
+INSERT INTO `userinfo` VALUES (1,'chenpan','25d55ad283aa400af464c76d713c07ad','陈攀','2016223045183','saygr@qq.com','研一','2017-01-01','13500000000',0,'','image_head/head7.jpg'),(2,'yuanling','25d55ad283aa400af464c76d713c07ad','袁玲','2016223040019','2641946537@qq.com','研一','2017-01-01','13500000000',0,'','image_head/head3.jpg'),(3,'wss','25d687e2c7e715b2f1c9bc30a47b0863','王莎莎','2016223040085','565107769@qq.com','研一','2017-01-01','13500000000',0,'','image_head/head1.jpg'),(4,'qcp','792b271fe3e6cee7b1618786e6b96781','邱晨鹏','2016223045164','237203435@qq.com','研一','2017-01-01','13500000000',0,'','image_head/head7.jpg'),(5,'qilingyun','faccdfbd7a234251fcb70ef80a5a5d9a','齐凌云','2015223040074','1223865610@qq.com','研二','2017-01-01','13500000000',0,'','image_head/head7.jpg'),(6,'404619844','e928b7b6b35af1635176a6473c24f045','李政志','2014223040115','aaronlzz@qq.com','研三','2017-01-01','13500000000',0,'','image_head/head7.jpg'),(7,'chen','8aa7f8937f7f7036c5e230deaaae19e3','陈新义','2015223045183','907303458@qq.com','研二','2017-01-01','13500000000',0,'','image_head/head7.jpg'),(8,'王思雅','54b61741237e8c968fbc203509a00c9c','王思雅','2015223040080','2451305642@qq.com','研二','2017-01-01','13500000000',0,'','image_head/head7.jpg');
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `preuserinfo`;

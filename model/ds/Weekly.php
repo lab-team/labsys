@@ -47,7 +47,7 @@ class ds_WeeklyModel {
      * @return int
      */
     public function add($title, $content, $sponsor) {
-        if (empty($week_title) || empty($week_content) || empty($week_Sponsor)) {
+        if (empty($title) || empty($content) || empty($sponsor)) {
             return false;
         }
         $insert            = array();

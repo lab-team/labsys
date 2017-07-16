@@ -1,4 +1,7 @@
 <?php
+require_once(dirname(__FILE__)."/model/ds/UserInfo.php");
+require_once(dirname(__FILE__)."/model/bs/TaskInfo.php");
+require_once(dirname(__FILE__)."/model/ds/TaskInfo.php");
 if (!isset ($_SESSION)) {
     ob_start();
     session_start();
@@ -9,16 +12,13 @@ if (! isset($_SESSION['name'])) {
     echo "<script>alert('你还没有登录!!');location='index.php';</script>";
 } else {
     $name = $_SESSION['name'];
-    $user = new UserDb();
-    $china_name = $user->selectUserByUser_name($name)['china_name'];
-    $face_url = $user->selectUserByUser_name($name)['face'];
-    $Task = new TaskDb();
-    $result = array();
-    $result = $Task->selectTaskBySponsor($name);
-    //print_r($result);
-    $Taskcount = count($result);
-    
-    //$title[]=array();
+    $userObj=new ds_UserInfoModel();
+    $userRes=$userObj->getData($name);
+    $china_name = $userRes[0]['china_name'];
+    $face_url = $userRes[0]['face'];
+    $taskObj=new ds_TaskInfoModel();
+    $taskRes=$taskObj->getData(false,false,$name);
+    $taskCount = count($taskRes);
     }
 //注销操作
 if (isset($_GET["tj"]) && $_GET["tj"] == "destroy") {
@@ -26,46 +26,44 @@ if (isset($_GET["tj"]) && $_GET["tj"] == "destroy") {
     echo "<script>alert('注销成功');location='index.php';</script>";
 }
 
-
-
 //获取签到按钮的value值
 function check_reg(){
     $name = $_SESSION['name'];
     $notice1 = "签到";
     $notice2 = "已签到";
-		global $ghostname;
-		global $gpassname;
-		global $gpassword;
-		global $gdatabase;
-    $host_name = $ghostname;
-    $db_name = $gdatabase;
-    $user_name = $gpassname;
-    $user_pass =$gpassword;
-    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
-    $result_num = mysqli_query($conn,$find_num_sql);
-    $rs_num = mysqli_fetch_array($result_num);
-    $stuNum1 = $rs_num['student_num'];
-    //获取当日时间
-    date_default_timezone_set("PRC");
-    $date = date('y-m-d',time());
-    
-    $qd_query = "select * from stureg where student_num = '$stuNum1'";
-    $qd_result = mysqli_query($conn,$qd_query);
-
-    if($qd_result){//如果找到有关该学号的签到信息
-        $qd_rows_num = mysqli_num_rows($qd_result);
-        if($qd_rows_num){
-           while($rows = mysqli_fetch_array($qd_result)){
-                if($rows['regDate']== $date) //判断该签到信息中的日期是否有今天
-                    return $notice2;  //如果有，返回“已签到”
-           }
-           return $notice1; 
-        }
-        else
-            return $notice1;
-    }
-    else
+//		global $ghostname;
+//		global $gpassname;
+//		global $gpassword;
+//		global $gdatabase;
+//    $host_name = $ghostname;
+//    $db_name = $gdatabase;
+//    $user_name = $gpassname;
+//    $user_pass =$gpassword;
+//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
+//    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
+//    $result_num = mysqli_query($conn,$find_num_sql);
+//    $rs_num = mysqli_fetch_array($result_num);
+//    $stuNum1 = $rs_num['stuno'];
+//    //获取当日时间
+//    date_default_timezone_set("PRC");
+//    $date = date('y-m-d',time());
+//
+//    $qd_query = "select * from stureg where student_num = '$stuNum1'";
+//    $qd_result = mysqli_query($conn,$qd_query);
+//
+//    if($qd_result){//如果找到有关该学号的签到信息
+//        $qd_rows_num = mysqli_num_rows($qd_result);
+//        if($qd_rows_num){
+//           while($rows = mysqli_fetch_array($qd_result)){
+//                if($rows['regtime']== $date) //判断该签到信息中的日期是否有今天
+//                    return $notice2;  //如果有，返回“已签到”
+//           }
+//           return $notice1;
+//        }
+//        else
+//            return $notice1;
+//    }
+//    else
         return $notice1; //如果有，返回“签到”
     
 }
@@ -74,39 +72,39 @@ function reg_color(){
     $name = $_SESSION['name'];
     $notice1 = "#33ccff";
     $notice2 = "#888888";
-		global $ghostname;
-		global $gpassname;
-		global $gpassword;
-		global $gdatabase;
-    $host_name = $ghostname;
-    $db_name = $gdatabase;
-    $user_name = $gpassname;
-    $user_pass =$gpassword;
-    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
-    $result_num = mysqli_query($conn,$find_num_sql);
-    $rs_num = mysqli_fetch_array($result_num);
-    $stuNum1 = $rs_num['student_num'];
-    //获取当日时间
-    date_default_timezone_set("PRC");
-    $date = date('y-m-d',time());
-
-    $qd_query = "select regDate from stureg where student_num = '$stuNum1'";
-    $qd_result = mysqli_query($conn,$qd_query);
-    
-    if($qd_result){//如果找到有关该学号的签到信息
-        $qd_rows_num = mysqli_num_rows($qd_result);
-        if($qd_rows_num){
-           while($rows = mysqli_fetch_array($qd_result)){
-                if($rows['regDate']== $date) //判断该签到信息中的日期是否有今天
-                    return $notice2;  //如果有，返回“已签到”
-           }
-           return $notice1; 
-        }
-        else
-            return $notice1;
-    }
-    else
+//		global $ghostname;
+//		global $gpassname;
+//		global $gpassword;
+//		global $gdatabase;
+//    $host_name = $ghostname;
+//    $db_name = $gdatabase;
+//    $user_name = $gpassname;
+//    $user_pass =$gpassword;
+//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
+//    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
+//    $result_num = mysqli_query($conn,$find_num_sql);
+//    $rs_num = mysqli_fetch_array($result_num);
+//    $stuNum1 = $rs_num['stuno'];
+//    //获取当日时间
+//    date_default_timezone_set("PRC");
+//    $date = date('y-m-d',time());
+//
+//    $qd_query = "select regDate from stureg where student_num = '$stuNum1'";
+//    $qd_result = mysqli_query($conn,$qd_query);
+//
+//    if($qd_result){//如果找到有关该学号的签到信息
+//        $qd_rows_num = mysqli_num_rows($qd_result);
+//        if($qd_rows_num){
+//           while($rows = mysqli_fetch_array($qd_result)){
+//                if($rows['regtime']== $date) //判断该签到信息中的日期是否有今天
+//                    return $notice2;  //如果有，返回“已签到”
+//           }
+//           return $notice1;
+//        }
+//        else
+//            return $notice1;
+//    }
+//    else
         return $notice1; //如果有，返回“签到”
 }
 
@@ -115,39 +113,39 @@ function click_not(){
     $name = $_SESSION['name'];
     $notice1 = "";
     $notice2 = "disabled";
-		global $ghostname;
-		global $gpassname;
-		global $gpassword;
-		global $gdatabase;
-    $host_name = $ghostname;
-    $db_name = $gdatabase;
-    $user_name = $gpassname;
-    $user_pass =$gpassword;
-    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
-    $result_num = mysqli_query($conn,$find_num_sql);
-    $rs_num = mysqli_fetch_array($result_num);
-    $stuNum1 = $rs_num['student_num'];
-    //获取当日时间
-    date_default_timezone_set("PRC");
-    $date = date('y-m-d',time());
-
-    $qd_query = "select regDate from stureg where student_num = '$stuNum1'";
-    $qd_result = mysqli_query($conn,$qd_query);
-    
-    if($qd_result){//如果找到有关该学号的签到信息
-        $qd_rows_num = mysqli_num_rows($qd_result);
-        if($qd_rows_num){
-           while($rows = mysqli_fetch_array($qd_result)){
-                if($rows['regDate']== $date) //判断该签到信息中的日期是否有今天
-                    return $notice2;  //如果有，返回“已签到”
-           }
-           return $notice1; 
-        }
-        else
-            return $notice1;
-    }
-    else
+//		global $ghostname;
+//		global $gpassname;
+//		global $gpassword;
+//		global $gdatabase;
+//    $host_name = $ghostname;
+//    $db_name = $gdatabase;
+//    $user_name = $gpassname;
+//    $user_pass =$gpassword;
+//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
+//    $find_num_sql = "SELECT student_num FROM user_info WHERE user_name = '$name'";
+//    $result_num = mysqli_query($conn,$find_num_sql);
+//    $rs_num = mysqli_fetch_array($result_num);
+//    $stuNum1 = $rs_num['stuno'];
+//    //获取当日时间
+//    date_default_timezone_set("PRC");
+//    $date = date('y-m-d',time());
+//
+//    $qd_query = "select regDate from stureg where student_num = '$stuNum1'";
+//    $qd_result = mysqli_query($conn,$qd_query);
+//
+//    if($qd_result){//如果找到有关该学号的签到信息
+//        $qd_rows_num = mysqli_num_rows($qd_result);
+//        if($qd_rows_num){
+//           while($rows = mysqli_fetch_array($qd_result)){
+//                if($rows['regtime']== $date) //判断该签到信息中的日期是否有今天
+//                    return $notice2;  //如果有，返回“已签到”
+//           }
+//           return $notice1;
+//        }
+//        else
+//            return $notice1;
+//    }
+//    else
         return $notice1; //如果有，返回“签到”
 }
 
@@ -155,61 +153,55 @@ function check_week(){
     $name = $_SESSION['name'];
     $notice1 = "本周周报已提交";
     $notice2 = "本周周报未提交";
-			global $ghostname;
-		global $gpassname;
-		global $gpassword;
-		global $gdatabase;
-    $host_name = $ghostname;
-    $db_name = $gdatabase;
-    $user_name = $gpassname;
-    $user_pass =$gpassword;
-    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
-    $result_num = mysqli_query($conn,$find_num_sql);
-    $rs_num = mysqli_fetch_array($result_num);
-    $stuNum1 = $rs_num['leave_time'];
-
-    //获取当日时间
-    $time1=strtotime($stuNum1);
-    $d2=ceil((time()-$time1)/60/60/24);
-
-    if($d2<7)
-        return $notice1;
-    else
+//			global $ghostname;
+//		global $gpassname;
+//		global $gpassword;
+//		global $gdatabase;
+//    $host_name = $ghostname;
+//    $db_name = $gdatabase;
+//    $user_name = $gpassname;
+//    $user_pass =$gpassword;
+//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
+//    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
+//    $result_num = mysqli_query($conn,$find_num_sql);
+//    $rs_num = mysqli_fetch_array($result_num);
+//    $stuNum1 = $rs_num['leave_time'];
+//
+//    //获取当日时间
+//    $time1=strtotime($stuNum1);
+//    $d2=ceil((time()-$time1)/60/60/24);
+//
+//    if($d2<7)
+//        return $notice1;
+//    else
         return $notice2;
-    // }
-    //else
-    //  return $notice1;
 }
 function check_week_color(){
     $name = $_SESSION['name'];
     $notice1 = "#888888";
     $notice2 = "#33ccff";
-			global $ghostname;
-		global $gpassname;
-		global $gpassword;
-		global $gdatabase;
-    $host_name = $ghostname;
-    $db_name = $gdatabase;
-    $user_name = $gpassname;
-    $user_pass =$gpassword;
-    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
-    $result_num = mysqli_query($conn,$find_num_sql);
-    $rs_num = mysqli_fetch_array($result_num);
-    $stuNum1 = $rs_num['leave_time'];
-
-    //获取当日时间
-    $time1=strtotime($stuNum1);
-    $d2=ceil((time()-$time1)/60/60/24);
-
-    if($d2<7)
-        return $notice1;
-    else
+//			global $ghostname;
+//		global $gpassname;
+//		global $gpassword;
+//		global $gdatabase;
+//    $host_name = $ghostname;
+//    $db_name = $gdatabase;
+//    $user_name = $gpassname;
+//    $user_pass =$gpassword;
+//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
+//    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
+//    $result_num = mysqli_query($conn,$find_num_sql);
+//    $rs_num = mysqli_fetch_array($result_num);
+//    $stuNum1 = $rs_num['leave_time'];
+//
+//    //获取当日时间
+//    $time1=strtotime($stuNum1);
+//    $d2=ceil((time()-$time1)/60/60/24);
+//
+//    if($d2<7)
+//        return $notice1;
+//    else
         return $notice2;
-    // }
-    //else
-    //  return $notice1;
 }
 ?>
 
@@ -303,7 +295,7 @@ window.onresize=function(){
 
 <body class="skin-blue">
 	<header class="header">
-		<a href="HomeIndex.php" class="logo"> <!-- Add the class icon to your logo image or logo icon to add the margining -->
+		<a href="main.php" class="logo"> <!-- Add the class icon to your logo image or logo icon to add the margining -->
 			Lab Task System
 		</a>
 		<!-- Header Navbar: style can be found in header.less -->
@@ -342,20 +334,20 @@ window.onresize=function(){
 					<li class="dropdown tasks-menu"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown"> <i class="fa fa-tasks"></i> 
 						<span
-							class="label label-danger taskfresh"><?php echo $Taskcount;?></span>
+							class="label label-danger taskfresh"><?php echo $taskCount;?></span>
 					</a>
 						<ul class="dropdown-menu">
 
 
-							<li class="header taskfresh">You have <?php echo $Taskcount;?> tasks</li>
+							<li class="header taskfresh">You have <?php echo $taskCount;?> tasks</li>
 
 							<li>
 								<!-- inner menu: contains the actual data -->
 								<ul class="menu taskfresh">
                                          <?php
                                         
-                                        if ($Taskcount >= 4) {
-                                            $newarr = array_slice($result, $Taskcount - 4, 4);
+                                        if ($taskCount >= 4) {
+                                            $newarr = array_slice($result, $taskCount - 4, 4);
                                         } 
                                         else {
                                             $newarr = $result;
@@ -457,7 +449,7 @@ window.onresize=function(){
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
                         <li>
-                            <a href="#" onclick="changeit('index2.php')">
+                            <a href="#" onclick="changeit('home.php')">
                                 <i class="fa fa-dashboard"></i> <span>主页面</span>
                             </a>
                         </li>
