@@ -1,34 +1,15 @@
 
 DROP TABLE IF EXISTS `bc`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bc` (
   `id` int(255) NOT NULL,
   `auser` varchar(255) NOT NULL,
   `apwd` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `bc`
---
 
 LOCK TABLES `bc` WRITE;
-/*!40000 ALTER TABLE `bc` DISABLE KEYS */;
 INSERT INTO `bc` VALUES (1,'123','123');
-/*!40000 ALTER TABLE `bc` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `image`
---
-
-
-
---
--- Table structure for table `leavewords`
---
 
 DROP TABLE IF EXISTS `leavewords`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -43,11 +24,6 @@ CREATE TABLE `leavewords` (
   `is_audit` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `leavewords`
---
 
 LOCK TABLES `leavewords` WRITE;
 /*!40000 ALTER TABLE `leavewords` DISABLE KEYS */;
@@ -57,8 +33,6 @@ UNLOCK TABLES;
 
 
 DROP TABLE IF EXISTS `reply`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reply` (
   `rid` int(11) NOT NULL AUTO_INCREMENT,
   `author_id` varchar(48) NOT NULL,
@@ -69,12 +43,7 @@ CREATE TABLE `reply` (
   `ip` varchar(30) NOT NULL,
   PRIMARY KEY (`rid`),
   KEY `author_id` (`author_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `reply`
---
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 LOCK TABLES `reply` WRITE;
 /*!40000 ALTER TABLE `reply` DISABLE KEYS */;
@@ -195,7 +164,6 @@ CREATE TABLE `image` (
 
 LOCK TABLES `image` WRITE;
 INSERT INTO `image` VALUES (1,'head1','resource/image_head/head1.jpg'),(2,'head2','resource/image_head/head2.jpg'),(3,'head3','resource/image_head/head3.jpg'),(4,'head4','resource/image_head/head4.jpg'),(5,'head5','resource/image_head/head5.jpg'),(6,'head6','resource/image_head/head6.jpg'),(7,'head7','resource/image_head/head7.jpg');
-/*!40000 ALTER TABLE `image` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
