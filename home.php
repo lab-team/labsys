@@ -22,8 +22,6 @@ if (!isset($_SESSION['name'])) {
             $regdate[$index] = $rs['regDate'];
             $str             = $regdate[$index] . "/" . $str;
             $index++;
-
-
         }
     }
 }
