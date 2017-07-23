@@ -2,12 +2,13 @@
 require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
 require_once(dirname(__FILE__) . "/model/bs/TaskInfo.php");
 require_once(dirname(__FILE__) . "/model/ds/TaskInfo.php");
+require_once(dirname(__FILE__) . "/model/bs/Weekly.php");
 if (!isset ($_SESSION)) {
     ob_start();
     session_start();
 }
-error_reporting(0);
-//
+//error_reporting(0);
+
 if (!isset($_SESSION['name'])) {
     echo "<script>alert('你还没有登录!!');location='index.php';</script>";
 } else {
@@ -151,58 +152,40 @@ function click_not() {
 }
 
 function check_week() {
-    $name    = $_SESSION['name'];
+    global $name;
     $notice1 = "本周周报已提交";
     $notice2 = "本周周报未提交";
-//			global $ghostname;
-//		global $gpassname;
-//		global $gpassword;
-//		global $gdatabase;
-//    $host_name = $ghostname;
-//    $db_name = $gdatabase;
-//    $user_name = $gpassname;
-//    $user_pass =$gpassword;
-//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-//    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
-//    $result_num = mysqli_query($conn,$find_num_sql);
-//    $rs_num = mysqli_fetch_array($result_num);
-//    $stuNum1 = $rs_num['leave_time'];
-//
-//    //获取当日时间
-//    $time1=strtotime($stuNum1);
-//    $d2=ceil((time()-$time1)/60/60/24);
-//
-//    if($d2<7)
-//        return $notice1;
-//    else
+
+    $weeklyObj = new bs_WeeklyModel();
+    $weekly    = $weeklyObj->getDataByEqual(false,$name);            //必须按ID降序排列
+    $leaveTime = $weekly[0]['leave_time'];
+
+    //获取当日时间
+    $time=strtotime($leaveTime);
+    $d2=ceil((time()-$time)/60/60/24);
+
+    if($d2<7)
+        return $notice1;
+    else
     return $notice2;
 }
 
 function check_week_color() {
-    $name    = $_SESSION['name'];
+    global $name;
     $notice1 = "#888888";
     $notice2 = "#33ccff";
-//			global $ghostname;
-//		global $gpassname;
-//		global $gpassword;
-//		global $gdatabase;
-//    $host_name = $ghostname;
-//    $db_name = $gdatabase;
-//    $user_name = $gpassname;
-//    $user_pass =$gpassword;
-//    $conn = mysqli_connect($host_name,$user_name,$user_pass,$db_name) or die("Could not connect!");
-//    $find_num_sql = "SELECT * FROM leavewords  WHERE username = '$name' order by id desc";
-//    $result_num = mysqli_query($conn,$find_num_sql);
-//    $rs_num = mysqli_fetch_array($result_num);
-//    $stuNum1 = $rs_num['leave_time'];
-//
-//    //获取当日时间
-//    $time1=strtotime($stuNum1);
-//    $d2=ceil((time()-$time1)/60/60/24);
-//
-//    if($d2<7)
-//        return $notice1;
-//    else
+
+    $weeklyObj = new bs_WeeklyModel();
+    $weekly    = $weeklyObj->getDataByEqual(false,$name);            //必须按ID降序排列
+    $leaveTime = $weekly[0]['leave_time'];
+
+    //获取当日时间
+    $time1=strtotime($leaveTime);
+    $d2=ceil((time()-$time1)/60/60/24);
+
+    if($d2<7)
+        return $notice1;
+    else
     return $notice2;
 }
 ?>
@@ -331,12 +314,7 @@ function check_week_color() {
                                style="margin-top:0.35cm; background:<?php echo reg_color(); ?>;width:80px;height:26px; font-family:微软雅黑;color:white;border:none; border-radius:2px; cursor:pointer;
                                    "></submit>
                     </form>
-                    <?php
-                    //对每月签到信息进行删除
-                    if (strcmp($_SESSION['name'], "chenpan") == 0) {
-                        include "deleteQiandaoInfo.html";
-                    }
-                    ?>
+                    
                     <!-- Notifications: style can be found in dropdown.less -->
                 <li class="dropdown notifications-menu">
                     </a>
@@ -362,9 +340,9 @@ function check_week_color() {
                                 <?php
 
                                 if ($taskCount >= 4) {
-                                    $newarr = array_slice($result, $taskCount - 4, 4);
+                                    $newarr = array_slice($taskRes, $taskCount - 4, 4);
                                 } else {
-                                    $newarr = $result;
+                                    $newarr = $taskRes;
                                 }
                                 if ($newarr) {
 
@@ -402,7 +380,7 @@ function check_week_color() {
                             </ul>
                         </li>
                         <li class="footer">
-                            <a href="#" onclick="changeit('seeTask.php')">查看所有任务</a>
+                            <a href="#" onclick="changeit('./Task/seeTask.php')">查看所有任务</a>
                         </li>
                     </ul>
                 </li>
@@ -459,7 +437,7 @@ function check_week_color() {
                 <div class="input-group">
                     <input type="text" name="q" class="form-control" placeholder="Search..."/>
                     <span class="input-group-btn">
-                                <button type='submit' name='seach' id='search-btn' class="btn btn-flat"><i
+                                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i
                                         class="fa fa-search"></i></button>
                             </span>
                 </div>
@@ -473,7 +451,7 @@ function check_week_color() {
                     </a>
                 </li>
                 <li>
-                    <a href="#" onclick="changeit('seeTask.php')">
+                    <a href="#" onclick="changeit('./Task/seeTask.php')">
                         <i class="fa fa-th"></i> <span>任务总览</span>
                     </a>
                 </li>
@@ -484,12 +462,12 @@ function check_week_color() {
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="#" onclick="changeit('TaskDetail.php')"><i class="fa fa-angle-double-right"></i>查看任务</a>
+                        <li><a href="#" onclick="changeit('./Task/TaskDetail.php')"><i class="fa fa-angle-double-right"></i>查看任务</a>
                         </li>
-                        <li><a href="#" onclick="changeit('addTask.php')"><i class="fa fa-angle-double-right"></i> 添加任务</a>
+                        <li><a href="#" onclick="changeit('./Task/addTask.php')"><i class="fa fa-angle-double-right"></i> 添加任务</a>
                         </li>
 
-                        <li><a href="#" onclick="changeit('inquireTask1.php')"><i class="fa fa-angle-double-right"></i>
+                        <li><a href="#" onclick="changeit('./Task/inquireTask1.php')"><i class="fa fa-angle-double-right"></i>
                                 修改任务</a></li>
 
                     </ul>
@@ -501,11 +479,11 @@ function check_week_color() {
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="#" onclick="changeit('write.php')"><i class="fa fa-angle-double-right"></i>
+                        <li><a href="#" onclick="changeit('./Weekly/write.php')"><i class="fa fa-angle-double-right"></i>
                                 添加周报</a></li>
-                        <li><a href="#" onclick="changeit('week.php')"><i class="fa fa-angle-double-right"></i> 查看周报</a>
+                        <li><a href="#" onclick="changeit('./Weekly/week.php')"><i class="fa fa-angle-double-right"></i> 查看周报</a>
                         </li>
-                        <li><a href="#" onclick="changeit('inquireWeek.php')"><i class="fa fa-angle-double-right"></i>
+                        <li><a href="#" onclick="changeit('./Weekly/inquireWeek.php')"><i class="fa fa-angle-double-right"></i>
                                 修改周报</a></li>
 
                     </ul>

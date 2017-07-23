@@ -49,30 +49,18 @@ class ds_TaskInfoModel {
         $condtion['status'] = Conf::not_del;
         $userObj            = new dao_MysqlModel();
         $res                = $userObj->where($condtion)->order($order)->select(self::table);
-
         return $res;
     }
 
     /**
-     * 添加任务
-     * @param $title
-     * @param $content
-     * @param $process
-     * @param $sponsor
-     * @param $desc
+     * @param $insert         **任务信息数组
      * @return bool|int
      */
-    public function add($title, $content, $process, $sponsor, $desc) {
-        if (empty($title) || empty($content) || empty($process) || empty($sponsor) || empty($desc)) {
+
+    public function add($insert) {
+        if(!is_array($insert) || empty($insert)){
             return false;
         }
-        $insert            = array();
-        $insert['title']   = trim($title);
-        $insert['content'] = trim($content);
-        $insert['process'] = trim($process);
-        $insert['sponsor'] = trim($sponsor);
-        $insert['desc']    = trim($desc);
-        $insert['stime']   = date(Conf::dafult_time);
         $userObj           = new dao_MysqlModel();
         $res               = $userObj->insert(self::table, $insert);
 
@@ -124,7 +112,7 @@ class ds_TaskInfoModel {
         if (!empty($process)) {
             $condtion['process'] = trim($process);
         }
-        $update  = array('status' => Conf::is_del);
+        $update  = array('status' => Conf::is_del);var_dump($condtion);
         $userObj = new dao_MysqlModel();
         $res     = $userObj->where($condtion)->update(self::table, $update);
 

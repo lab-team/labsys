@@ -22,7 +22,7 @@ require_once(dirname(__FILE__)."/model/ds/UserInfo.php");
 				   //尚未注册
 				   $login_info=-1;
 	           }
-	           else if($userInfo[0]["userpwd"] == $pwd){
+	           else if($userInfo[0]["userpwd"] == md5($pwd)){
 	               //"登陆成功";
 
 	               $login_info=1;

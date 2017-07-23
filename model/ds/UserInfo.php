@@ -93,7 +93,7 @@ class ds_UserInfoModel {
      * @return int|string
      */
     public function update($condtion, $status = false, $passWd = false, $grade = false, $mobile = false,
-                           $image = false) {
+                           $image = false,$email = false,$mac = false,$chinaname = false) {
         $update = array();
         if (empty($condtion) || !is_array($condtion)) {
             return false;
@@ -112,6 +112,15 @@ class ds_UserInfoModel {
         }
         if (!empty($image)) {
             $update['image'] = trim($image);
+        }
+        if (!empty($email)) {
+            $update['email'] = trim($email);
+        }
+        if (!empty($mac)) {
+            $update['mac'] = trim($mac);
+        }
+        if(!empty($chinaname)){
+            $update['chinaname'] = trim($chinaname);
         }
 
         $userObj = new dao_MysqlModel();
