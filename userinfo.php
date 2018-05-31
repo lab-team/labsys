@@ -1,16 +1,16 @@
 <?php
-require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
-if (!isset ($_SESSION)) {
-    ob_start();
-    session_start();
+    require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
+    if (!isset ($_SESSION)) {
+        ob_start();
+        session_start();
+    }
+    if (!isset($_SESSION['name'])) {
+        echo "<script>alert('你还没有登录!!');location='index.php';</script>";
+        exit("Log In");
 }
-if (!isset($_SESSION['name'])) {
-    echo "<script>alert('你还没有登录!!');location='index.php';</script>";
-    exit("Log In");
-}
-$name    = $_SESSION['name'];
-$userObj = new ds_UserInfoModel();
-$userRes = $userObj->getData($name);
+    $name    = $_SESSION['name'];
+    $userObj = new ds_UserInfoModel();
+    $userRes = $userObj->getData($name);
 ?>
 <!DOCTYPE html>
 <html>

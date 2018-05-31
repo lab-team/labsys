@@ -37,10 +37,10 @@ class dao_MysqlModel {
         // $_addr['user']=$arrConf['datatansfer']['username'];
         // $_addr['passwd']=$arrConf['datatansfer']['password'];
         // $_addr['dbname']=$arrConf['datatansfer']['dbname'];
-        $_addr['host']='127.0.0.1';
+        $_addr['host']='localhost';
         $_addr['port']='3306';
-        $_addr['user']='chendb';
-        $_addr['passwd']='chenmysql';
+        $_addr['user']='root';
+        $_addr['passwd']='12345';
         $_addr['dbname']='labsys';
         return $_addr;
     }
@@ -58,6 +58,10 @@ class dao_MysqlModel {
         if (is_null(self::$_dbh)) {
             $this->_connect();
         }
+    }
+
+    public function _destructor(){
+        $this->close();
     }
 
     /**
@@ -308,6 +312,35 @@ class dao_MysqlModel {
         return $this;
     }
 
+    public function like($option) {
+        if(empty($option)){
+            $this->_where='';
+            return $this;
+        }
+        if ($this->_clear > 0)
+            $this->_clear();
+        $this->_where = ' where ';
+        $logic        = 'and';
+        if (is_string($option)) {
+            $this->_where .= $option;
+        } elseif (is_array($option)) {
+            foreach ($option as $k => $v) {
+                if (is_array($v)) {
+                    $relative  = isset($v[1]) ? $v[1] : 'like';
+                    $logic     = isset($v[2]) ? $v[2] : 'and';
+                    $condition = '(' . $this->_addChar($k) . ' ' . $relative . ' ' . $v[0] . ')';
+                } else {
+                    $logic     = 'and';
+                    $condition = ' (' . $this->_addChar($k) . 'like' . "'%" . $v . "%'" . ') ';
+                }
+
+                $this->_where .= isset($mark) ? $logic . $condition : $condition;
+                $mark = 1;
+            }
+        }echo $this->_where;
+        return $this;
+    }
+
     /**
      * 设置排序
      * @param mixed $option 排序条件数组 例:array('sort'=>'desc')
@@ -336,7 +369,7 @@ class dao_MysqlModel {
      * @param int $pageSize 为空则函数设定取出行数，不为空则设定取出行数及页数
      * @return $this
      */
-    public function limit($page, $pageSize = null) {
+    public function limit($page = null, $pageSize = null) {
         if ($this->_clear > 0)
             $this->_clear();
         if ($pageSize === null) {
@@ -344,6 +377,21 @@ class dao_MysqlModel {
         } else {
             $pageval      = intval(($page - 1) * $pageSize);
             $this->_limit = "limit " . $pageval . "," . $pageSize;
+        }
+
+        return $this;
+    }
+
+    public function limit2($line = null, $size = null) {
+        if ($this->_clear > 0)
+            $this->_clear();
+        if($line === null){
+            return $this;
+        }
+        if ($size === null) {
+            $this->_limit = "limit " . $line;
+        } else {
+            $this->_limit = "limit " . $line . "," . $size;
         }
 
         return $this;

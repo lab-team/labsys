@@ -22,6 +22,8 @@ if (!isset($_SESSION['name'])) {
             $regdate[$index] = $rs['regDate'];
             $str             = $regdate[$index] . "/" . $str;
             $index++;
+
+
         }
     }
 }
@@ -130,12 +132,12 @@ if (!isset($_SESSION['name'])) {
 
 
                 <div class="p4CllM" id="p4m1"></div>
-                <div class=texiao><h4><a href="#" onclick="changeit('TaskDetail.php')">任务管理工具</a></h4></div>
+                <div class=texiao><h4><a href="#" onclick="changeit('./Task/TaskDetail.php')">任务管理工具</a></h4></div>
                 <p>用于记录提醒人个工作及生活、学习等事务：让你轻松管理任务，有惊喜哟！</p>
             </div>
             <div class="p4Clr">
                 <div class="p4ClrM" id="p4m2"></div>
-                <div class=texiao><h4><a href="#" onclick="changeit('write.php')">周报工具</a></h4></div>
+                <div class=texiao><h4><a href="#" onclick="changeit('./Weekly/write.php')">周报工具</a></h4></div>
                 <p>新入职工作的员工，想必都为周报头疼过，但是其实周报并不难，把自己的工作内容记录下来就可以了平时一定要养成工作记录的好习惯哟！</p>
             </div>
 
@@ -151,12 +153,12 @@ if (!isset($_SESSION['name'])) {
             </div>
             <div class="p4Cll">
                 <div class="p4CllM" id="p4m5"></div>
-                <div class=texiao><h4><a href="#" onclick="changeit('index2.php')">未开放</a></h4></div>
+                <div class=texiao><h4><a href="#" onclick="changeit('home.php')">未开放</a></h4></div>
                 <p>扁平化组织环境下，更需要快速全面的了解每位下属的成效、既定工作的推进情况，并及时给予指导和调整。</p>
             </div>
             <div class="p4Clr">
                 <div class="p4ClrM" id="p4m6"></div>
-                <div class=texiao><h4><a href="#" onclick="changeit('index2.php')">未开放</a></h4></div>
+                <div class=texiao><h4><a href="#" onclick="changeit('home.php')">未开放</a></h4></div>
                 <p>扁平化组织环境下，更需要快速全面的了解每位下属的成效、既定工作的推进情况，并及时给予指导和调整。</p>
             </div>
         </div>

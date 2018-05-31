@@ -2,7 +2,8 @@
 require_once(dirname(__FILE__) . "/model/ds/PreUserInfo.php");
 require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
 require_once(dirname(__FILE__) . "/model/ds/Image.php");
-error_reporting(0);
+
+error_reporting(E_ALL & ~E_NOTICE);
 ?>
 <html>
 <head>
@@ -257,22 +258,20 @@ error_reporting(0);
 
                     <p id="div_error">
                         <?php
+
                         if ($_POST["existInfo"] == 1) {
                             echo "用户名已存在！";
-                        }
-                        if ($_POST["existInfo"] == 2) {
+                        } else if ($_POST["existInfo"] == 2) {
                             echo "密码应不少于8位！";
-                        }
-                        if ($_POST["existInfo"] == 3) {
+                        } else if ($_POST["existInfo"] == 8) {
+                            echo "密码输入不一致！";
+                        } else if ($_POST["existInfo"] == 3) {
                             echo "邮箱格式不正确！";
-                        }
-                        if ($_POST["existInfo"] == 4) {
+                        } else if ($_POST["existInfo"] == 4) {
                             echo "此用户不在预设名单，暂不能注册！  请联系管理员";
-                        }
-                        if ($_POST["existInfo"] == 5) {
+                        } else if ($_POST["existInfo"] == 5) {
                             echo "学号已存在！";
-                        }
-                        if ($_POST["existInfo"] == 6) {
+                        } else if($_POST["existInfo"] == 6) {
                             echo "注册失败请重试！";
                         }
 
@@ -300,6 +299,19 @@ error_reporting(0);
                     <td>
                         <input required type="password" id="userpwd" class="textbox" name="userpwd" aria-label="请输入密码"
                                placeholder="密码大于8位!" pattern="^[\w\W]{8,}$"
+                               style="font-family:微软雅黑; font-size:14px" <?php if ($_POST["existInfo"] == 1 || $_POST["existInfo"] == 3) {
+                            echo "value='" . $_POST['userpwd'] . "'";
+                        } ?> />
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td_1">
+                        <font class="reg_title">确&nbsp;&nbsp;&nbsp;认<font color="red">*</font>:&nbsp;&nbsp;&nbsp;&nbsp;
+                        </font>
+                    </td>
+                    <td>
+                        <input required type="password" id="userpwdV" class="textbox" name="userpwdV"
+                               placeholder="请确认密码"!" pattern="^[\w\W]{8,}$"
                                style="font-family:微软雅黑; font-size:14px" <?php if ($_POST["existInfo"] == 1 || $_POST["existInfo"] == 3) {
                             echo "value='" . $_POST['userpwd'] . "'";
                         } ?> />
@@ -389,16 +401,15 @@ error_reporting(0);
                             <td>&nbsp;</td>
 
                             <?php
-                            $image  = new ds_ImageModel();
-                            $result = $image->getData();
+                            $head  = ds_ImageModel::head;
                             $i      = 0;
-                            foreach ($result as $key => $rs) {
+                            foreach ($head as $image) {
                                 $i++; ?>
 
                                 <td bgcolor="#FFFFFF">
-                                    <input type="radio" value="<?php echo "resource/image_head/head" . $i . ".jpg" ?>"
+                                    <input type="radio" value="<?php echo $image ?>"
                                            name="image" checked="checked"/>
-                                    <img alt="" src="<?php echo $rs['src'] ?>" height="49" width="49" border="0">
+                                    <img alt="" src="<?php echo $image ?>" height="49" width="49" border="0">
                                 </td>
                             <?php } ?>
 
@@ -425,10 +436,11 @@ if (isset($_POST["btn_reg"])) {
     $userObj      = new ds_UserInfoModel();
     $in_name      = trim($_POST["username"]);
     $in_pwd       = trim($_POST["userpwd"]);
+    $in_pwdV      = trim($_POST['userpwdV']);
     $in_chinaName = trim($_POST["chinaname"]);
     $in_stuno     = trim($_POST["stuno"]);
     $in_email     = trim($_POST["email"]);
-    $in_grade     = trim($_POST["grade"]);
+    $in_grade     = trim($_POST["stugrade"]);
     $in_image     = trim($_POST["image"]);
     $in_mobile    = trim($_POST["mobile"]);
 
@@ -436,7 +448,6 @@ if (isset($_POST["btn_reg"])) {
     $isExitNo   = $userObj->getData(false, false, $in_stuno);
     $isPre      = $preUserObj->getData($in_chinaName);
     $pattern    = "/([a-z0-9]*[-_.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[.][a-z]{2,3}([.][a-z]{2})?/i";
-
     if (!empty($isExitName[0])) {
         $exist_info = 1;
     } else if (strlen($in_pwd) < 6) {
@@ -445,10 +456,12 @@ if (isset($_POST["btn_reg"])) {
         $exist_info = 3;
     } else if (!empty($isExitNo[0])) {
         $exist_info = 5;
+    } else if(strcmp($in_pwd,$in_pwdV) != 0){
+        $exist_info = 8;
     } else if (!empty($isPre[0])) {//将数据插入数据库
         $in_pwd = md5($in_pwd); //加密
 
-        $result   = $userObj->add($in_name, $in_pwd, $in_chinaName, $in_stuno, $in_email, $in_grade, $in_image, $in_mobile);
+        $result   = $userObj->add($in_name, $in_pwd, $in_chinaName, $in_stuno, $in_email, $in_grade, $in_image, $in_mobile);echo $result;
         if($result){
             $reg_info = 1;
         }
@@ -481,7 +494,7 @@ if (isset($_POST["btn_reg"])) {
         alert("注册成功！即将跳转至登录页面…………");
         window.location.href = 'index.php';
     }
-    else if (jsvar_2 == 1 || jsvar_2 == 2 || jsvar_2 == 3 || jsvar_2 == 4 || jsvar_2 == 5) {
+    else if (jsvar_2 == 1 || jsvar_2 == 2 || jsvar_2 == 3 || jsvar_2 == 4 || jsvar_2 == 5 || jsvar_2 == 8) {
         window.onload = function () {
             document.getElementById('hiddenForm').submit();
         }

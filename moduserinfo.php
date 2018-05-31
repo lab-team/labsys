@@ -1,21 +1,23 @@
 <?php
-require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
-require_once(dirname(__FILE__) . "/model/ds/Image.php");
-require_once(dirname(__FILE__) . "/model/ds/PreUserInfo.php");
-if (!isset ($_SESSION)) {
-    ob_start();
-    session_start();
-}
-error_reporting(0);
-if (!isset($_SESSION['name'])) {
-    echo "<script>alert('你还没有登录!!');location='index.php';</script>";
-    exit(0);
-}
-$name     = $_SESSION['name'];
-$imageObj = new ds_ImageModel();
-$imageRes   = $imageObj->getData();
-$userObj = new ds_UserInfoModel();
-$userRes = $userObj->getData($name);
+    require_once(dirname(__FILE__) . "/model/ds/UserInfo.php");
+    require_once(dirname(__FILE__) . "/model/ds/Image.php");
+    require_once(dirname(__FILE__) . "/model/ds/PreUserInfo.php");
+
+    if (!isset ($_SESSION)) {
+        ob_start();
+        session_start();
+    }
+
+    if (!isset($_SESSION['name'])) {
+        echo "<script>alert('你还没有登录!!');location='index.php';</script>";
+        exit(0);
+    }
+
+    $name     = $_SESSION['name'];
+
+    $userObj = new ds_UserInfoModel();
+    $userRes = $userObj->getData($name);
+
 ?>
 <html>
 <head>
@@ -159,7 +161,7 @@ $userRes = $userObj->getData($name);
                         <font class="reg_title">用户名<font color="red">*</font>:&nbsp;&nbsp;&nbsp;&nbsp;</font>
                     </td>
                     <td>
-                        <input type="text" readonly="readonly" id="username" class="textbox" name="username"
+                        <input type="text" readonly="readonly" class="textbox" name="username"
                                style="border:0; background:transparent;font-family:微软雅黑; font-size:14px"
                                <?php echo "value='" . $userRes[0]['username'] . "'"; ?> />
                     </td>
@@ -170,7 +172,7 @@ $userRes = $userObj->getData($name);
                         </font>
                     </td>
                     <td>
-                        <input required type="password" pattern="^[\w\W]{8,}$" id="userpwd" class="textbox"
+                        <input required type="password" pattern="^[\w\W]{8,}$" class="textbox"
                                name="userpwd" placeholder="密码大于8位！" style="font-family:微软雅黑; font-size:14px"/>
                     </td>
                 </tr>
@@ -180,8 +182,17 @@ $userRes = $userObj->getData($name);
                         </font>
                     </td>
                     <td>
-                        <input required type="password" pattern="^[\w\W]{8,}$" id="pwd_verify" class="textbox"
-                               name="pwd_verify" placeholder="请确认密码" style="font-family:微软雅黑; font-size:14px"/>
+                        <input required type="password" pattern="^[\w\W]{8,}$" class="textbox"
+                               name="pwdVerify" placeholder="请确认密码" style="font-family:微软雅黑; font-size:14px"/>
+                    </td>
+                </tr>
+                <tr class="tr">
+                    <td class="td_1">
+                        <font class="reg_title">姓&nbsp;&nbsp;&nbsp;名<font color="red">*</font>:&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                    </td>
+                    <td>
+                        <input required type=text  class="textbox" name="chinaname" placeholder="请输入姓名"
+                               style="font-family:微软雅黑; font-size:14px" <?php echo "value='".$userRes[0]['chinaname']."'";?> />
                     </td>
                 </tr>
                 <tr class="tr">
@@ -190,18 +201,18 @@ $userRes = $userObj->getData($name);
                         </font>
                     </td>
                     <td>
-                        <input required type=text id="chinaname" class="textbox" name="chinaname" placeholder="请输入姓名"
-                               style="font-family:微软雅黑; font-size:14px" <?php echo "value='" . $userRes[0]['chinaname'] . "'"; ?> />
+                        <input required type=text  class="textbox" name="phone" placeholder="请输入手机号"
+                               style="font-family:微软雅黑; font-size:14px" <?php echo "value='" . $userRes[0]['mobile'] . "'"; ?> />
                     </td>
                 </tr>
                 <tr class="tr">
                     <td class="td_1">
-                        <font class="reg_title">mac地址<font color="red">*</font>:&nbsp;&nbsp;&nbsp;&nbsp;
+                        <font class="reg_title">mac<font color="red">*</font>:&nbsp;&nbsp;&nbsp;&nbsp;
                         </font>
                     </td>
                     <td>
-                        <input type=text id="stunum" class="textbox" name="stunum" placeholder="请输入学号"
-                               style="font-family:微软雅黑; font-size:14px" <?php echo "value='" . $userRes[0]['stuno'] . "'"; ?> />
+                        <input type=text class="textbox" name="mac" placeholder="请输入mac地址"
+                               style="font-family:微软雅黑; font-size:14px" <?php echo "value='" . $userRes[0]['mac'] . "'"; ?> />
                     </td>
                 </tr>
                 <tr class="tr">
@@ -209,7 +220,7 @@ $userRes = $userObj->getData($name);
                         <font class="reg_title">邮&nbsp;&nbsp;&nbsp;箱&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
                     </td>
                     <td>
-                        <input type=email id="useremail" class="textbox" name="useremail" placeholder="请输入邮箱"
+                        <input type=email  class="textbox" name="useremail" placeholder="请输入邮箱"
                                style="font-family:微软雅黑; font-size:14px" <?php echo "value='" . $userRes[0]['email'] . "'"; ?> />
                     </td>
                 </tr>
@@ -241,14 +252,13 @@ $userRes = $userObj->getData($name);
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <?php
-                            $i = 0;
-                            foreach ($imageRes as $image) {
-                                $i++; ?>
+                            foreach (ds_ImageModel::head as $image) {
+                                 ?>
 
                                 <td bgcolor="#FFFFFF">
-                                    <input type="radio" value="<?php echo "resource/image_head/head" . $i . ".jpg" ?>"
+                                    <input type="radio" value="<?php echo $image; ?>"
                                            name="userface" checked="checked"/>
-                                    <img alt="" src="<?php echo $image['src'] ?>" height="49" width="49" border="0">
+                                    <img alt="" src="<?php echo $image ?>" height="49" width="49" border="0">
                                 </td>
                             <?php } ?>
 
@@ -267,35 +277,28 @@ $userRes = $userObj->getData($name);
 
 <?php
 
-if (isset($_POST["btn_reg"])) {
-    $in_pwd        = $_POST["userpwd"];
-    $pwd_verify    = $_POST["pwd_verify"];
-    $in_china_name = $_POST["chinaname"];
-    $in_stunum     = $_POST["stunum"];
-    $in_email      = $_POST["useremail"];
-    $in_grade      = $_POST["stugrade"];
-    $in_face       = $_POST["userface"];
+    if (isset($_POST["btn_reg"])) {
+        $pass          = $_POST["userpwd"];
+        $passV         = $_POST["pwdVerify"];
+        $chinaName     = $_POST["chinaname"];
+        $phoneNo       = $_POST["phone"];
+        $mac           = $_POST["mac"];
+        $email         = $_POST["useremail"];
+        $grade         = $_POST["stugrade"];
+        $face          = $_POST["userface"];
 
-    if (strcmp($in_pwd, $pwd_verify) == 0) {
-        $md5_pwd           = md5($in_pwd);
-        $judge_only_query  = "select * from user_info where student_num = '$in_stunum'";
-        $judge_only_result = mysqli_query($conn, $judge_only_query);
-        $judge_only_rs     = mysqli_fetch_array($judge_only_result);
 
-        if ($judge_only_rs["user_name"] == $name || $judge_only_rs == null) {
-            $update_sql = "update user_info set user_pwd='$md5_pwd',china_name='$in_china_name',student_num='$in_stunum',user_email='$in_email',student_grade='$in_grade',face='$in_face' where user_name='$name'";
-            $verify_rs  = mysqli_query($conn, $update_sql);
-            if ($verify_rs) {
-                echo "<script>alert('修改成功');location='userinfo.php';</script>";
-            } else {
-                echo "<script>alert('修改失败');location='userinfo.php';</script>";
-            }
+        if (strcmp($pass, $passV) == 0) {
+            $md5Pwd     =   md5($pass);
+            $result     =   $userObj->update(array('username' => $name),false,$md5Pwd,$grade,$phoneNo,$face,$email,$mac,$chinaName);
+                if ($result) {
+                    echo "<script>alert('修改成功');location='userinfo.php';</script>";
+                } else {
+                    //echo "<script>alert('修改失败');location='userinfo.php';</script>";
+                }
         } else {
-            echo "<script>alert('请保持学号唯一');location='moduserinfo.php';</script>";
+            echo "<script>alert('两次密码输入不一致');</script>";
         }
-    } else {
-        echo "<script>alert('两次密码输入不一致');</script>";
     }
-}
 ?>
 </html>

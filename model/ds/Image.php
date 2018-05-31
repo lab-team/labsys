@@ -3,19 +3,12 @@ require_once(dirname(__FILE__) . "/../dao/Mysql.php");
 
 class ds_ImageModel {
 
-    const table = 'image';
+    const head =  array('resource/image_head/head1.jpg',
+                     'resource/image_head/head2.jpg',
+                     'resource/image_head/head3.jpg',
+                     'resource/image_head/head4.jpg',
+                     'resource/image_head/head5.jpg',
+                     'resource/image_head/head6.jpg',
+                     'resource/image_head/head7.jpg',);
 
-    public function getData($id = false, $title = false) {
-        $condtion = array();
-        if (!empty($id)) {
-            $condtion['id'] = trim($id);
-        }
-        if (!empty($title)) {
-            $condtion['title'] = trim($title);
-        }
-        $userObj = new dao_MysqlModel();
-        $res     = $userObj->where($condtion)->select(self::table);
-
-        return $res;
-    }
 }
